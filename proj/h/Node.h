@@ -14,8 +14,9 @@ public:
    }
 
    ~Node(){
-	   //pcb = nullptr;
-	   delete pcb;
+
+	   pcb = nullptr;
+
    }
 
 };

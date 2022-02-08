@@ -13,15 +13,13 @@ List::List(){
 List::~List(){
 
 	lock;
-
 	Node* curr = head, *prev = nullptr;
-
 	while(curr != nullptr){
 		prev = curr;
 		curr = curr->next;
-
 		delete prev;
 	}
+	head = tail = nullptr;
 
 	unlock;
 };

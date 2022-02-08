@@ -6,59 +6,41 @@
 #include "../H/PCBList.h"
 #include "../H/Node.h"
 void userMain(){
-
-   lock;
-
-   cout<<"New created objects: " << System::couter<<endl;
-
-   System::global_list->push_last((PCB*)System::main);
-   System::global_list->push_last((PCB*)System::idle);
-
-   for(int s = 0; s < 4; s++){
-      System::global_list->push_last((new ThreadA())->getMyPCB());
-      System::global_list->tail->pcb->start();
+	cout<<"New created objects: " << System::couter<<endl;
+//17
+   for(int s = 0; s < 10; s++){
+	   new ThreadA();
    }
-   cout<<"New created objects: " << System::couter<<endl;//51
+	cout<<"New created objects: " << System::couter<<endl;
+//77
    unlock;
-   for (int i = 0; i < 60; ++i) {
+   for (int i = 0; i < 30; ++i) {
       lock;
       cout<<"main thread = "<<i<<endl;
       unlock;
       for (int k = 0; k<10000; ++k)
          for (int j = 0; j <30000; ++j);
    }
-/*
-   cout<<"New created objects: " << System::couter<<endl;
 
-   System::main->state = PCB::BLOCKED;
-   System::blocked_list->push_last(System::main);*/
 
-   /*lock;
+  /* System::blocked_list->push_last(System::main);
+
+   lock;
       for(Node* temp = System::global_list->head; temp != nullptr; temp = temp->next){
-    	  if(temp->pcb->id != System::main->getMyPCB()->id && temp->pcb->state != PCB::FINISHED){
+    	  if(temp->pcb->id != System::main->id && temp->pcb->state != PCB::FINISHED){
     		  temp->pcb->getMyThread()->waitToComplete();
-    		  //Relativno je sve ok, samo ne radi promena konteksta za main nit iz nekog razloga
-    		  for (int i = 0; i < 10; ++i){
-				lock;
-				cout<<"main thread = "<<i<<endl;
-				unlock;
     		  }
     	  }
       }
    unlock;
 */
-   cout<<"New created objects: " << System::couter<<endl;//48
-System::running->state = PCB::FINISHED;
-
-dispatch();
-
-}
+};
 
 int main(){
-	cout<<"New created objects: " << System::couter<<endl;//17
+	cout<<"New created objects: " << System::couter<<endl;//9
 	System::initialize();
+	//67
 	userMain();
-//NE ULAZI SE U SISTEM RESTORE DOK SE NISU SVE NITI ZAVRSILE
 	System::restore();
 	cout<<"New created objects: " << System::couter<<endl;//19
 	return 0;

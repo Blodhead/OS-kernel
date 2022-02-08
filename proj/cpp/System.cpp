@@ -22,7 +22,7 @@ volatile PCB* System::idle = nullptr;
 PCBList* System::global_list = new PCBList();
 PCBList* System::blocked_list = new PCBList();
 PCBList* System::timeblocked_list = new PCBList();
-PCB* System::main = nullptr; //MOZDA JE PROBLEM STO NIJE VOLATILE?
+PCB* System::main = nullptr;
 
 int System::couter = 0;
 
@@ -39,31 +39,52 @@ void System::initialize(){
    setvect(0x60,System::old_route);
 #endif
 
-   PCB::initMainThread();
-   cout<<"Main id: "<<System::main->id<<endl;
-   PCB::initIdleThread();
-   cout<<"Idle id: "<<System::idle->id<<endl;
+   //9
+	cout<<"New created objects: " << System::couter<<endl;
+   PCB::initMainThread();//+2
+	cout<<"New created objects: " << System::couter<<endl;
+   //11
+   PCB::initIdleThread();//+4
+	cout<<"New created objects: " << System::couter<<endl;
+   //15
    System::timer_tics_cnt = System::main->kvant;
 
+   System::global_list->push_last((PCB*)System::main);//+1
+   System::global_list->push_last((PCB*)System::idle);//+1
+   //17
 };
 
 void System::restore(){
 
+	System::running->state = PCB::FINISHED;
+	dispatch();
+	cout<<"New created objects: " << System::couter<<endl;
+//67
 #ifndef BCC_BLOCK_IGNORE
    setvect(0x08,System::old_route);
 #endif
 
 	lock;
-
 	((PCB*)System::idle)->getMyThread()->exitThread();
 	((PCB*)System::main)->getMyThread()->exitThread();
 
+
 	delete System::global_list;
+	cout<<"New created objects global list delete: " << System::couter<<endl;
+//10
 	delete System::blocked_list;
+	//5 po niti objekata
+	cout<<"New created objects blocked list delete: " << System::couter<<endl;
+//9
+	delete System::timeblocked_list;
+	cout<<"New created objects timeblocked list delete: " << System::couter<<endl;
+//8
 
-	//delete System::idle;
-	//delete System::main;
-
+	delete System::idle;
+	delete System::main;
+	delete System::running;
+	cout<<"New created objects: " << System::couter<<endl;
+//4
 	System::main = nullptr;
 	System::idle = nullptr;
 	old_route = nullptr; new_route = nullptr;
@@ -74,7 +95,7 @@ void System::restore(){
 	unlock;
 };
 
-void interrupt System::switch_context(...){////!!!!!
+void interrupt System::switch_context(...){
 
 	//static volatile PCB *current = nullptr, *next = nullptr;
 /*
@@ -142,19 +163,20 @@ lock;
 	}
 
 	if(next == nullptr){
-		 if(current->state == PCB::FINISHED){
-			 next = System::idle;
-			}
-		 else if(current->state == PCB::RUNNING){
-			 next = current;
-			 System::timer_tics_cnt = current->kvant;
-			 System::content_switch = false;
-			 unlock;
-			 return;
-			}
+		if(current->state == PCB::FINISHED){
+
+		}
+		else if(current->state == PCB::RUNNING){
+
+			System::timer_tics_cnt = current->kvant;
+			System::content_switch = false;
+			unlock;
+			return;
+
+		}
 
 	}
-	if((next->state == PCB::READY && current->state == PCB::RUNNING) || (next->state == PCB::READY && current == System::main && System::main->state == PCB::FINISHED)){
+	if((next->state == PCB::READY && current->state == PCB::RUNNING) || ((next->state == PCB::READY || next == System::idle) && current == System::main && System::main->state == PCB::FINISHED)){
 
 #ifndef BCC_BLOCK_IGNORE
 		asm {

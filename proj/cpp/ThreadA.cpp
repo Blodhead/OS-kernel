@@ -23,7 +23,7 @@ ThreadA::~ThreadA() {//
 void ThreadA::run(){
 
 
-   for (int i = 0; i < 40; ++i) {
+   for (int i = 0; i < 20; ++i) {
       lock
       cout<< *(this->getMyPCB()) <<i<<endl;
       unlock

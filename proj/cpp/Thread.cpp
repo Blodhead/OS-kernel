@@ -10,6 +10,10 @@ Thread::Thread(StackSize stackSize, Time timeSlice){//CHECKED
 	this->myPCB->myThread = this;
 	this->myPCB->myJoin->head = this->myPCB->myJoin->tail = nullptr;
 	this->myPCB->myJoinNum = 0;
+	if(this->getId() > 1){
+	System::global_list->push_last(this->getMyPCB());
+    this->start();
+	}
 };
 
 void Thread::start(){//CHECKED
@@ -75,7 +79,7 @@ void dispatch(){
 }
 void Thread::run(){}
 
-Thread::~Thread(){//CHECKED
+Thread::~Thread(){
 	delete(this->myPCB);
 	this->myPCB = nullptr;
 };

@@ -1,8 +1,37 @@
 #include "../h/PCBList.h"
+#include "../h/System.h"
+#include "../h/Thread.h"
+PCBList::PCBList():List(){head = tail = nullptr;};
 
-PCBList::PCBList(){head = tail = nullptr;};
+PCBList::~PCBList(){
+	lock;
 
-PCBList::~PCBList(){}//missing
+	Node* curr = head, *prev = nullptr;
+	if(this == System::global_list){
+
+		while(curr != nullptr){
+			prev = curr;
+			curr = curr->next;
+			if(curr->pcb != System::main)
+			delete prev->pcb->getMyThread(); //delete pcb = 4
+			//else delete prev->pcb;
+			delete prev; // delete elem = 1
+		}
+		head = tail = nullptr;
+		unlock;
+		return;
+	}
+
+	while(curr != nullptr){
+		prev = curr;
+		curr = curr->next;
+		delete prev;
+	}
+
+	head = tail = nullptr;
+
+	unlock;
+}//missing
 
 void PCBList::push_in_time_list(PCB* pcb){
 

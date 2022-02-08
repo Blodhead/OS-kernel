@@ -6,10 +6,12 @@ KernelSem::KernelSem(int init):value(init){
 	blocked = new List();
 }
 KernelSem::~KernelSem(){
+
 	lock;
-	delete blocked;
-	blocked = nullptr;
+		delete blocked;
+		blocked = nullptr;
 	unlock;
+
 }
 
 int KernelSem::wait(Time maxTimeToWait){

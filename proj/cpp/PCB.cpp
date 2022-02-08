@@ -35,7 +35,7 @@ ID PCB::idd = 0;
          this->state = NOT_STARTED;
          this->kvant = timeSlice;
          this->myThread = myThread;
-         this->mySem = new KernelSem();
+         this->mySem = nullptr;
          this->myJoin = new PCBList();
          this->myJoinNum = 0;
          this->id = this->idd++;
@@ -48,12 +48,13 @@ ID PCB::idd = 0;
          this->stack_size = 0;
          this->state = PCB::RUNNING;
          this->kvant = timeSlice;
-         this->mySem = new KernelSem();
+         this->mySem = nullptr;
          this->myJoin = new PCBList();
+         this->myThread = nullptr;
          this->myJoinNum = 0;
          this->run = nullptr;
          this->stack = nullptr;   // ako se pravi PCB main thread-a, ne treba da mu mi alociramo i dealociramo stek
-
+         unlock;
       }
    };
 
@@ -67,12 +68,12 @@ ID PCB::idd = 0;
 	public:
 		IdleThread(StackSize stackSize = defaultStackSize,Time timeSlice = defaultTimeSlice):Thread(stackSize,timeSlice){}
 		void run(){
-			while(1);}
+			while(1){cout<<"IDLE"<<endl;};}
 		~IdleThread(){waitToComplete();}
 	};
 
-	//System::idle = (new IdleThread())->myPCB;
-	System::idle = new PCB(nullptr,4096,1);
+	System::idle = (new IdleThread())->myPCB;
+	//System::idle = new PCB(nullptr,4096,50);
 	System::idle->state = PCB::RUNNING;
    };
 
@@ -98,7 +99,7 @@ ID PCB::idd = 0;
 	   if(this->state != PCB::FINISHED && this->state != PCB::NOT_STARTED && this->id != System::main->id && this->id != System::idle->id){
 
 		   this->myJoinNum++;
-		   ((PCB*)System::running)->state = PCB::BLOCKED;
+		   ((PCB*)System::running)->state = PCB::FINISHED;
 		   this->myJoin->push_last((PCB*)System::running);
 		   unlock;
 		   dispatch();
@@ -109,19 +110,26 @@ ID PCB::idd = 0;
    }
 
    PCB::~PCB(){
-	if(PCB::FINISHED != this->state){
-		System::global_list->pop_by_id(this->id);
 
-		if(stack != nullptr){
-			delete[] stack;
-			stack=nullptr;
-		}
+	if(this == System::main){
 
-	mySem = nullptr;
+		delete myJoin;
+
+		stack = nullptr;
+		myThread = nullptr;
+		mySem = nullptr;
+		myJoin = nullptr;
+		return;
+
 	}
 
+	if(stack != nullptr){
+		delete[] stack;
+		stack = nullptr;
+	}
 	if(myJoin != nullptr) delete myJoin;
-	if(mySem != nullptr) delete mySem;
+	//delete myThread;
+	myThread = nullptr;
 	myJoin = nullptr;
 	mySem = nullptr;
 
