@@ -44,6 +44,8 @@ Node* List::pop_first(){
 	head->prev = nullptr;
 	temp->prev = nullptr;
 
+	if(head == nullptr) tail = head;
+
 	unlock;
 
 	return temp;
@@ -64,6 +66,8 @@ Node* List::pop_last(){
 	temp->prev = nullptr;
 	temp->next = nullptr;
 
+	if(tail == nullptr) head = tail;
+
 	unlock;
 
 	return temp;
@@ -73,7 +77,7 @@ Node* List::pop_by_id(ID id){
 
 	lock;
 
-	if(isEmpty()) {
+	if(this->head == nullptr) {
 		unlock;
 		return nullptr;
 	}
@@ -85,9 +89,11 @@ Node* List::pop_by_id(ID id){
 
          if(left != nullptr)
          left->next = right;
+         else head = right;
 
          if(right != nullptr)
          right->prev = left;
+         else tail = left;
 
          temp->next = temp->prev = nullptr;
 
@@ -133,7 +139,10 @@ void List::push_first(PCB* el){
       head = head->prev;
       head->next = temp;
    }
-
+   /*
+   if(this-> == System::timeblocked_list)
+   cout<<"Thread with id: "<<this->head->pcb->id<<" pushed in to timed list!"<<endl;
+   */
    unlock;
 
    return;

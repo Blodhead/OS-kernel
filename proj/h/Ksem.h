@@ -13,12 +13,11 @@ public:
 	virtual ~KernelSem ();
 	virtual int wait (Time maxTimeToWait);
 	virtual int signal(int n = 0);
-	int val () const;
+	int getVal () const;
+	void incVal();
 	void exit(int i);
 private:
 	int value;
-	List* blocked;
-
 };
 
 

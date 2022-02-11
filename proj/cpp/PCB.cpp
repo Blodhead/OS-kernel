@@ -9,7 +9,7 @@
 ID PCB::idd = 0;
 
    PCB::PCB(Runnable run,StackSize stackSize, Time timeSlice){//CHECKED
-
+	   System::num_of_threads++;
       if(run){
          lock;
 
@@ -34,6 +34,7 @@ ID PCB::idd = 0;
          //DODATNI FLEGOVI I PROMENJIVE
          this->state = NOT_STARTED;
          this->kvant = timeSlice;
+         this->waiting_time = 0;
          this->myThread = myThread;
          this->mySem = nullptr;
          this->myJoin = new PCBList();
@@ -48,6 +49,7 @@ ID PCB::idd = 0;
          this->stack_size = 0;
          this->state = PCB::RUNNING;
          this->kvant = timeSlice;
+         this->waiting_time = 0;
          this->mySem = nullptr;
          this->myJoin = new PCBList();
          this->myThread = nullptr;
@@ -68,7 +70,7 @@ ID PCB::idd = 0;
 	public:
 		IdleThread(StackSize stackSize = defaultStackSize,Time timeSlice = defaultTimeSlice):Thread(stackSize,timeSlice){}
 		void run(){
-			while(1){cout<<"IDLE"<<endl;};}
+			while(1){};}
 		~IdleThread(){waitToComplete();}
 	};
 

@@ -5,6 +5,7 @@
 
 class PCBList;
 class PCB;
+class Semaphore;
 
 class System{
 
@@ -22,11 +23,14 @@ public:
    static PCBList *global_list, *blocked_list, *timeblocked_list;
    static PCB* main;
    static mybool content_switch;
+   static Semaphore* semaphore;
+   static int couter;
+   static int num_of_threads;
+
    static void initialize();
    static void restore();
    static void interrupt timer(...);
    static void interrupt switch_context(...);
-   static int couter;
 
 };
 

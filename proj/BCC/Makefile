@@ -1,7 +1,7 @@
 SRC = ..\h\*.cpp ..\cpp\*.cpp 
-INCLUDES = ..\h\*.h ..\cpp\*.h 
+INCLUDES = ..\h\*.h 
 LIBS = ..\*.lib 
-INCLUDEPATH = C:\bc31\include;..\h;..\cpp;
+INCLUDEPATH = C:\bc31\include;..\h;
 LIBSPATH = C:\bc31\lib;..\;
 TARGET = proj.exe
 $(TARGET):	$(SRC) $(INCLUDES) configuration.xmi

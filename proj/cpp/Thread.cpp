@@ -59,7 +59,7 @@ void Thread::exitThread(){
 	   //System::global_list->pop_by_id(this->getId());
 	   //////////KOD ZA SEMAFORE FALI (IZBACIVANJE IZ SEMAFORA)
 	}
-
+	System::num_of_threads--;
 	unlock;
 	if(this != System::idle && this->getId() != System::main->id){
 		dispatch();

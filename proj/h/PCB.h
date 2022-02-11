@@ -26,6 +26,7 @@ public:
 	unsigned sp;
 	unsigned ss;
 	Time kvant;
+	Time waiting_time;
 	KernelSem* mySem;
 	PCBList* myJoin;
 	int myJoinNum;

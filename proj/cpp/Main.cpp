@@ -6,17 +6,16 @@
 #include "../H/PCBList.h"
 #include "../H/Node.h"
 void userMain(){
-	cout<<"New created objects: " << System::couter<<endl;
 //17
-   for(int s = 0; s < 10; s++){
+   for(int s = 0; s < 20 ; s++){
 	   new ThreadA();
    }
-	cout<<"New created objects: " << System::couter<<endl;
+	cout<<System::num_of_threads<<endl;
 //77
    unlock;
-   for (int i = 0; i < 30; ++i) {
+   for (int i = 0; i < 50; ++i) {
       lock;
-      cout<<"main thread = "<<i<<endl;
+      cout<<"main thread = "<<i << " | " << System::timer_tics_cnt<<endl;
       unlock;
       for (int k = 0; k<10000; ++k)
          for (int j = 0; j <30000; ++j);
@@ -37,12 +36,14 @@ void userMain(){
 };
 
 int main(){
-	cout<<"New created objects: " << System::couter<<endl;//9
+//9
 	System::initialize();
-	//67
+//17
+
 	userMain();
+//67
 	System::restore();
-	cout<<"New created objects: " << System::couter<<endl;//19
+//9
 	return 0;
 };
 

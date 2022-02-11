@@ -1,6 +1,7 @@
 #include "../H/Semaphor.h"
 #include "../H/Util.h"
 #include "../H/Ksem.h"
+#include <iostream.h>
 
 Semaphore::Semaphore(int init){
 	myImpl = new KernelSem(init);
@@ -16,7 +17,10 @@ Semaphore::~Semaphore(){
 };
 
 int Semaphore::wait(Time maxTimetoWait){
-	return myImpl->wait(maxTimetoWait);
+	int x = myImpl->wait(maxTimetoWait);
+	cout<<"";
+	return x;
+
 };
 
 int Semaphore::signal(int n){
@@ -24,7 +28,7 @@ int Semaphore::signal(int n){
 };
 
 int Semaphore::val() const{
-	return myImpl->val();
+	return myImpl->getVal();
 };
 
 

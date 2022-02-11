@@ -13,12 +13,13 @@ public:
 
 	//Timed list methods
 	void push_in_time_list(PCB* pcb);
+	void pop_from_time_list(int id = -1);
+	void decWaitVal();
 
 private:
 
 	void sort_by_time();
 	void unsort_by_time();
-
 };
 
 
