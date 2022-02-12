@@ -34,7 +34,8 @@ PCBList::~PCBList(){
 	head = tail = nullptr;
 
 	unlock;
-}//missing
+	return;
+}
 
 void PCBList::push_in_time_list(PCB* pcb){
 

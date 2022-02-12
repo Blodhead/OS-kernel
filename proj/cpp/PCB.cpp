@@ -112,7 +112,7 @@ ID PCB::idd = 0;
    }
 
    PCB::~PCB(){
-
+	   lock;
 	if(this == System::main){
 
 		delete myJoin;
@@ -121,6 +121,7 @@ ID PCB::idd = 0;
 		myThread = nullptr;
 		mySem = nullptr;
 		myJoin = nullptr;
+		unlock;
 		return;
 
 	}
@@ -135,6 +136,8 @@ ID PCB::idd = 0;
 	myJoin = nullptr;
 	mySem = nullptr;
 
+	unlock;
+	return;
    };
 
    void PCB::wrapper(){//CHECKED

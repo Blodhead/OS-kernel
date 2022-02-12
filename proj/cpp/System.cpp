@@ -61,22 +61,19 @@ void System::restore(){
 
 	System::running->state = PCB::FINISHED;
 	dispatch();
-	cout<<"New created objects: " << System::couter<<endl;
+	/*cout<<"New created objects: " << System::couter<<endl;
+	lock;*/
 //67
-#ifndef BCC_BLOCK_IGNORE
-   setvect(0x08,System::old_route);
-#endif
 
 	lock;
 	((PCB*)System::idle)->getMyThread()->exitThread();
 	((PCB*)System::main)->getMyThread()->exitThread();
 
-
 	delete System::global_list;
 	//cout<<"New created objects global list delete: " << System::couter<<endl;
-//10
+//10	cout<<"New created objects: " << System::couter<<endl;
 	delete System::blocked_list;
-	//5 po niti objekata
+	//5 po niti objekata	cout<<"New created objects: " << System::couter<<endl;
 	//cout<<"New created objects blocked list delete: " << System::couter<<endl;
 //9
 	delete System::timeblocked_list;
@@ -90,70 +87,21 @@ void System::restore(){
 //4
 	System::main = nullptr;
 	System::idle = nullptr;
-
+	cout<<"New created objects: " << System::couter<<endl;
 	old_route = nullptr; new_route = nullptr;
 	global_list = blocked_list = timeblocked_list = nullptr;
 
 	cout<<"System restore finished!"<<endl;
+
+#ifndef BCC_BLOCK_IGNORE
+   setvect(0x08,System::old_route);
+#endif
 
 	unlock;
 };
 
 void interrupt System::switch_context(...){
 
-	//static volatile PCB *current = nullptr, *next = nullptr;
-/*
-	cout<<"-----------Prekidna start(Thread id current running :"<<running->id<<")-----------"<<endl;
-	lock;
-	current = running;
-
-	if(current && current->state != PCB::FINISHED && current->state != PCB::BLOCKED){
-		current->state = PCB::READY;
-
-	 asm {
-		mov tsp, sp
-		mov tss, ss
-		mov tbp, bp
-	 };
-
-
-	 running->sp = tsp;
-	 running->ss = tss;
-	 running->bp = tbp;
-
-	}
-
-	next = Scheduler::get();
-
-	if(next == nullptr && current->state == PCB::FINISHED){next = System::idle;}//treba pogledati kad se budu radili smeafori
-	else if(next == nullptr) next = current;
-
-	lock;
-	if(next){
-		tsp = next->sp;
-		tss = next->ss;
-		tbp = next->sp;
-
-#ifndef BCC_BLOCK_IGNORE
-		asm {
-		mov sp, tsp
-		mov ss, tss
-		mov bp, tbp
-		}
-#endif
-
-		lock;
-		if(current!=next)
-		if(current->state != PCB::FINISHED && current->state != PCB::BLOCKED && current != System::idle)
-		Scheduler::put((PCB*)current);
-	}
-
-	running = next;
-	running->state = PCB::RUNNING;
-	timer_tics_cnt = running->kvant;
-	content_switch = false;
-	cout<<"-----------Prekidna end(Thread id next running:"<<running->id<<")-----------"<<endl;
-*/
 lock;
 
 	static volatile PCB *current = nullptr;
@@ -162,8 +110,9 @@ lock;
 	next = Scheduler::get();
 
 	if(System::num_of_threads == 2){
+		System::num_of_threads--;
 		System::main->state = PCB::READY;
-		Scheduler::put(System::main);
+		next = System::main;
 	}
 
 	if(current == nullptr || current->state == PCB::NOT_STARTED || current->state == PCB::READY){
@@ -200,14 +149,14 @@ lock;
 			 running->bp = tbp;
 
 			 if(current->state != PCB::BLOCKED)
-			 if(System::main != current || System::main->state != PCB::FINISHED){
+			 if((System::main != current || System::main->state != PCB::FINISHED) && current != System::idle){
 				 current->state = PCB::READY;
 				 Scheduler::put((PCB*)current);
 			 }
 	}
 	if(next->state == PCB::RUNNING || next->state == PCB::READY){
 // && (current->state == PCB::READY || current->state == PCB::FINISHED)
-		if(next == System::idle) cout<<"IDLE THREAD RUNNING"<<endl;
+		//if(next == System::idle) cout<<"IDLE THREAD RUNNING"<<endl;
 		tsp = next->sp;
 		tss = next->ss;
 		tbp = next->sp;
@@ -224,6 +173,8 @@ lock;
 		System::running = next;
 		System::timer_tics_cnt = next->kvant;
 		System::content_switch = false;
+		if(System::running == System::idle)
+		cout<<"IDLE is now running"<<endl;
 		unlock;
 		return;
 
