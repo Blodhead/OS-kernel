@@ -27,5 +27,8 @@ Event::~Event(){
 	delete myImpl;
 	myImpl=nullptr;
 	unlock;
+}
 
+KernelEv* Event::getMyKernelEvent(){
+	return this->myImpl;
 }

@@ -8,8 +8,8 @@ class KernelEv;
 
 class IVTEntry{
 public:
-	IntRoutine old;
-	IntRoutine newx;
+	IntRoutine old_event_route;
+	IntRoutine new_event_route;
 	KernelEv* event;
 	IVTNo iv;
 	static IVTEntry* array[256];

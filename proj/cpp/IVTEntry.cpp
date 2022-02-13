@@ -3,23 +3,23 @@
 #include "../H/KEvent.h"
 
 IVTEntry* IVTEntry::array[256];
-IVTEntry::IVTEntry(IVTNo ivn,IntRoutine n):iv(ivn),newx(n){
+IVTEntry::IVTEntry(IVTNo ivn,IntRoutine n):iv(ivn),new_event_route(n){
 
 #ifndef BCC_BLOCK_IGNORE
-	old = getvect(iv);
-	setvect(iv,newx);
+	old_event_route = getvect(iv);
+	setvect(iv,new_event_route);
 #endif
+	array[iv] = this;
 	event = nullptr;
-	array[iv]=this;
 }
 IVTEntry::~IVTEntry(){
 	lock;
 #ifndef BCC_BLOCK_IGNORE
-	setvect(iv,old);
+	setvect(iv,old_event_route);
 #endif
-	old=nullptr;
-	newx=nullptr;
-	event=nullptr;
+	old_event_route = nullptr;
+	new_event_route = nullptr;
+	event = nullptr;
 	unlock;
 }
 void IVTEntry::signal(){event->signal();}

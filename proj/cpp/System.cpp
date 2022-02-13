@@ -70,20 +70,17 @@ void System::restore(){
 	((PCB*)System::main)->getMyThread()->exitThread();
 
 	delete System::global_list;
-	//cout<<"New created objects global list delete: " << System::couter<<endl;
-//10	cout<<"New created objects: " << System::couter<<endl;
+
 	delete System::blocked_list;
-	//5 po niti objekata	cout<<"New created objects: " << System::couter<<endl;
-	//cout<<"New created objects blocked list delete: " << System::couter<<endl;
 //9
 	delete System::timeblocked_list;
-	//cout<<"New created objects timeblocked list delete: " << System::couter<<endl;
 //8
 
 	delete System::idle;
 	delete System::main;
 	delete System::running;
-	//cout<<"New created objects: " << System::couter<<endl;
+
+	delete System::semaphore;
 //4
 	System::main = nullptr;
 	System::idle = nullptr;

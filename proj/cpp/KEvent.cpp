@@ -25,7 +25,7 @@ void KernelEv::wait(){
 
 void KernelEv::signal(){
 	if(sem->val()<0){
-		sem->signal();
+		sem->signal(System::num_of_threads-2);
 	}
 };
 IVTNo KernelEv::getiv(){
@@ -34,8 +34,8 @@ IVTNo KernelEv::getiv(){
 KernelEv::~KernelEv(){
 	lock;
 	delete sem;
-	sem=nullptr;
-	owner=nullptr;
+	sem = nullptr;
+	owner = nullptr;
 	unlock;
 };
 
